@@ -107,8 +107,8 @@ function exportcsv_poller_bottom() {
 			
 	$now = strftime("%Y%m%d%H%M",time());
 	
-	$export = array(
-		'method'	=> 'mv',
+	$export_config[] = array(
+		'method'	=> 'cp',
 		'host'		=> '',
 		'port'		=> '',
 		'user'		=> '',
@@ -116,58 +116,64 @@ function exportcsv_poller_bottom() {
 		'prefix'	=> 'GWOS-IPTD-5m_',
 	);
 	
-	$success = false;
-	switch($export['method']){
-		case 'mv':
-			// move file to new destination
-			$success = rename($exportcsv_file, $export['path'].DIRECTORY_SEPARATOR.$export['prefix'].$now.'.csv');
-			break;
-		case 'php-scp':
-			
-			// connect
-			$session = ssh2_connect($export['host'], $export['port']);
-			if(!$session){
-				// TODO: debug output
+	foreach($export_config as $export){
+
+		$success = false;
+		switch($export['method']){
+			case 'cp':
+				// move file to new destination
+				$success = copy($exportcsv_file, $export['path'].DIRECTORY_SEPARATOR.$export['prefix'].$now.'.csv');
+				
 				break;
-			}
-			// authenticate
-			if(!ssh2_auth_agent($session, $export['user'])){
-				// TODO: debug output
+			case 'php-scp':
+
+				// connect
+				$session = ssh2_connect($export['host'], $export['port']);
+				if(!$session){
+					// TODO: debug output
+					break;
+				}
+				// authenticate
+				if(!ssh2_auth_agent($session, $export['user'])){
+					// TODO: debug output
+					break;
+				}
+
+				// send file
+				$success = ssh2_scp($session, $exportcsv_file, $export['path'].DIRECTORY_SEPARATOR.$export['prefix'].$now.'.csv');
 				break;
-			}
-			
-			// send file and remove if succeeded
-			$success = ssh2_scp($session, $exportcsv_file, $export['path'].DIRECTORY_SEPARATOR.$export['prefix'].$now.'.csv') && @unlink($exportcsv_file);
-			break;
-		case 'cmd-scp':
-			
-			// prepare options
-			$options = '';
-			if($export['port'] != 22) $options .= sprintf('-P %d ', $export['port']);
-			
-			// prepare full scp command
-			$command = sprintf('/usr/local/bin/scp %s %s "%s@%s:%s"',
-				$options,
-				$exportcsv_file,
-				escapeshellarg($export['user']),
-				escapeshellarg($export['host']),
-				escapeshellarg($export['path'].DIRECTORY_SEPARATOR.$export['prefix'].$now.'.csv')
-			);
-			
-			// execute command
-			if(system($command) !== false){
-				$success = @unlink($exportcsv_file);
-			}else{
-				// TODO: debug output
-			}
-			break;
-		case 'php-sftp':
-			// TODO
-			break;
+			case 'cmd-scp':
+
+				// prepare options
+				$options = '';
+				if($export['port'] != 22) $options .= sprintf('-P %d ', $export['port']);
+
+				// prepare full scp command
+				$command = sprintf('/usr/local/bin/scp %s "%s@%s:%s"',
+					$options.$exportcsv_file,
+					escapeshellarg($export['user']),
+					escapeshellarg($export['host']),
+					escapeshellarg($export['path'].DIRECTORY_SEPARATOR.$export['prefix'].$now.'.csv')
+				);
+
+				// execute command
+				$success = system($command) !== false;
+				break;
+			case 'php-sftp':
+				// TODO
+				break;
+		}
+
+		// TODO: debug output on succes/failure
+		if(!$success){
+			cacti_log('ERROR: Problem while exporting using method '.$export['method'], false, 'EXPORTCSV');
+		}
+	
 	}
 	
-	// TODO: debug output on succes/failure
-	
+	if(!@unlink($exportcsv_file)){
+		// TODO: debug output
+	}
 }
 
 ?>
