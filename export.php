@@ -156,7 +156,7 @@ function exportcsv_poller_bottom() {
 				if($export['port'] != 22) $options .= sprintf('-P %d ', $export['port']);
 
 				// prepare full scp command
-				$command = sprintf('/usr/local/bin/scp %s "%s@%s:%s"',
+				$command = sprintf('/usr/local/bin/scp %s %s@%s:%s',
 					$options.$exportcsv_file,
 					escapeshellarg($export['user']),
 					escapeshellarg($export['host']),
