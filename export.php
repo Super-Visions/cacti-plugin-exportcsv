@@ -113,20 +113,9 @@ function exportcsv_poller_bottom() {
 	$export_config_sql = "SELECT * FROM plugin_exportcsv_config WHERE enabled = 'on';";
 	
 	$export_config = db_fetch_assoc($export_config_sql);
-	/*
-	$export_config[] = array(
-		'type'		=> EXPORTCSV_TYPE_POLLER,
-		'method'	=> 'cp',
-		'host'		=> '',
-		'port'		=> '',
-		'user'		=> '',
-		'path'		=> '/tmp/exportcsv',
-		'prefix'	=> 'GWOS-IPTD-5m_',
-	);
-	*/
 	foreach($export_config as $export){
 		
-		cacti_log('Starting export '.$export['name'].' using method '.$export['method'], false, 'EXPORTCSV');
+		cacti_log('Starting export '.$export['name'].' using method '.$export['method'].' and type '.$export['type'], false, 'EXPORTCSV');
 		
 		$success = false;
 		switch($export['method']){
@@ -180,9 +169,9 @@ function exportcsv_poller_bottom() {
 
 		// TODO: debug output on succes/failure
 		if(!$success){
-			cacti_log('ERROR: Problem while exporting '.$export['name'].' '.$success, false, 'EXPORTCSV');
+			cacti_log('ERROR: Problem while exporting '.$export['name'], false, 'EXPORTCSV');
 		}else{
-			cacti_log('Export '.$export['name'].' completed. '.$success, false, 'EXPORTCSV');
+			cacti_log('Export '.$export['name'].' completed.', false, 'EXPORTCSV');
 		}
 	
 	}
