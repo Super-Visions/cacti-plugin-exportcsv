@@ -133,16 +133,20 @@ function exportcsv_poller_bottom() {
 				
 				break;
 			case 'php-scp':
+				if (!extension_loaded('ssh2')){
+					cacti_log('ERROR: required ssh2 extention is not loaded.', false, 'EXPORTCSV');
+					break;
+				}
 
 				// connect
 				$session = ssh2_connect($export['host'], $export['port']);
 				if(!$session){
-					// TODO: debug output
+					cacti_log(sprintf('ERROR: Could not make ssh connection to host %s at port %d.', $export['host'], $export['port']), false, 'EXPORTCSV');
 					break;
 				}
 				// authenticate
 				if(!ssh2_auth_agent($session, $export['user'])){
-					// TODO: debug output
+					cacti_log(sprintf('ERROR: Could not authenticate as user %s.', $export['user']), false, 'EXPORTCSV');
 					break;
 				}
 
