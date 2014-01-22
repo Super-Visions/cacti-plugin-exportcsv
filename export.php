@@ -19,7 +19,10 @@ function exportcsv_poller_output($rrd_update_array) {
 	
 	// create temporary file
 	global $exportcsv_file;
-	if(!isset($exportcsv_file)) $exportcsv_file = tempnam(__DIR__, 'exportcsv-');
+	if(!isset($exportcsv_file)){
+		$exportcsv_file = tempnam(__DIR__, 'exportcsv-');
+		chmod($exportcsv_file, 0644);
+	}
 	
 	$data_info_sql = "SELECT 
 	dl.snmp_query_id, 
@@ -177,15 +180,15 @@ function exportcsv_poller_bottom() {
 
 		// TODO: debug output on succes/failure
 		if(!$success){
-			cacti_log('ERROR: Problem while exporting '.$export['name'].' using method '.$export['method'], false, 'EXPORTCSV');
+			cacti_log('ERROR: Problem while exporting '.$export['name'].' '.$success, false, 'EXPORTCSV');
 		}else{
-			cacti_log('Export '.$export['name'].' using method '.$export['method'].' completed.', false, 'EXPORTCSV');
+			cacti_log('Export '.$export['name'].' completed. '.$success, false, 'EXPORTCSV');
 		}
 	
 	}
 	
 	if(!@unlink($exportcsv_file)){
-		// TODO: debug output
+		cacti_log('ERROR: Could not remove temporary file '.$exportcsv_file, false, 'EXPORTCSV');
 	}
 }
 
