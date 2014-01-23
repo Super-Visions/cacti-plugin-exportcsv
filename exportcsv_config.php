@@ -59,17 +59,8 @@ function export_rules(){
 	$sort_options = array(
 		'name'		=> array('Export Title', 'ASC'),
 		'id'		=> array('Export Id', 'ASC'),
-		'type'		=> array('Export Type', 'ASC'),
 		'method'	=> array('Method', 'ASC'),
 		'enabled'	=> array('Enabled', 'ASC'),
-	);
-	
-	$export_config_type = array(
-		EXPORTCSV_TYPE_POLLER => 'Poller',
-		EXPORTCSV_TYPE_REPORTIT => 'Reportit',
-	// future plans	
-	//	EXPORTCSV_TYPE_WEATHERMAP => 'Weathermap',
-	//	EXPORTCSV_TYPE_THOLD => 'Thold',
 	);
 	
 	// load page and sort settings
@@ -86,7 +77,6 @@ function export_rules(){
 	$config_list_sql = sprintf('SELECT 
 	config.id, 
 	config.name, 
-	config.type, 
 	config.method, 
 	config.enabled 
 FROM plugin_exportcsv_config config 
@@ -152,7 +142,6 @@ LIMIT %d OFFSET %d;',
 			form_selectable_cell($export_config_title, $export_config['id']);
 			
 			form_selectable_cell($export_config['id'], $export_config['id']);
-			form_selectable_cell( isset($export_config_type[$export_config['type']]) ? $export_config_type[$export_config['type']] : '' , $export_config['id']);
 			form_selectable_cell( $export_config['method'], $export_config['id']);
 
 			form_selectable_cell($export_config['enabled'] == 'on' ? 'Enabled' : 'Disabled', $export_config['id']);

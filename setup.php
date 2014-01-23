@@ -15,10 +15,6 @@
  +-------------------------------------------------------------------------+
  */
 
-define('EXPORTCSV_TYPE_POLLER', 1);
-define('EXPORTCSV_TYPE_REPORTIT', 2);
-define('EXPORTCSV_TYPE_WEATHERMAP', 3);
-define('EXPORTCSV_TYPE_THOLD', 4);
 
 function plugin_exportcsv_install() {
 	api_plugin_register_hook('exportcsv', 'poller_output', 'exportcsv_poller_output', 'export.php');
@@ -31,7 +27,6 @@ function plugin_exportcsv_install() {
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 		'type' => 'mediumint(8)', 'unsigned' => 'unsigned', 'NULL' => false, 'auto_increment' => true);
 	$data['columns'][] = array('name' => 'name',	'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'type',	'type' => 'smallint(3)', 'unsigned' => 'unsigned', 'NULL' => false, 'default' => 0);
 	$data['columns'][] = array('name' => 'method', 	'type' => 'char(8)', 'NULL' => false, 'default' => 'cp');
 	$data['columns'][] = array('name' => 'host',	'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'port',	'type' => 'mediumint(8)', 'unsigned' => 'unsigned', 'NULL' => true);
@@ -40,7 +35,6 @@ function plugin_exportcsv_install() {
 	$data['columns'][] = array('name' => 'prefix',	'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'enabled', 'type' => 'char(2)', 'NULL' => true,  'default' => '');
 	$data['primary'] = 'id';
-	$data['keys'][] = array('name'=> 'export_type', 'columns' => 'type');
 	$data['keys'][] = array('name'=> 'enabled', 'columns' => 'enabled');
 	$data['type'] = 'MyISAM';
 	$data['comment'] = 'ExportCSV Config';

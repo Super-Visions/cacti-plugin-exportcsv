@@ -115,7 +115,7 @@ function exportcsv_poller_bottom() {
 	$export_config = db_fetch_assoc($export_config_sql);
 	foreach($export_config as $export){
 		
-		cacti_log('Starting export '.$export['name'].' using method '.$export['method'].' and type '.$export['type'], false, 'EXPORTCSV');
+		cacti_log('Starting export '.$export['name'].' using method '.$export['method'], false, 'EXPORTCSV');
 		
 		$success = false;
 		switch($export['method']){
