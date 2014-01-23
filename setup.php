@@ -15,6 +15,7 @@
  +-------------------------------------------------------------------------+
  */
 
+define('EXPORTCSV_SCP_COMMAND', '/usr/local/bin/scp %s %s@%s:%s');
 
 function plugin_exportcsv_install() {
 	api_plugin_register_hook('exportcsv', 'poller_output', 'exportcsv_poller_output', 'export.php');

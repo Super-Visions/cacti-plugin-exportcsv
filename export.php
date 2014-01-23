@@ -20,7 +20,7 @@ function exportcsv_poller_output($rrd_update_array) {
 	// create temporary file
 	global $exportcsv_file;
 	if(!isset($exportcsv_file)){
-		$exportcsv_file = tempnam(__DIR__, 'exportcsv-');
+		$exportcsv_file = tempnam(sys_get_temp_dir(), 'exportcsv-');
 		chmod($exportcsv_file, 0644);
 	}
 	
@@ -127,7 +127,7 @@ function exportcsv_poller_bottom() {
 			case 'php-scp':
 				if (!extension_loaded('ssh2')){
 					cacti_log('ERROR: required ssh2 extention is not loaded.', false, 'EXPORTCSV');
-					break;
+					continue;
 				}
 
 				// connect
@@ -152,7 +152,7 @@ function exportcsv_poller_bottom() {
 				if($export['port'] != 22) $options .= sprintf('-P %d ', $export['port']);
 
 				// prepare full scp command
-				$command = sprintf('/usr/local/bin/scp %s %s@%s:%s',
+				$command = sprintf(EXPORTCSV_SCP_COMMAND,
 					$options.$exportcsv_file,
 					escapeshellarg($export['user']),
 					escapeshellarg($export['host']),
