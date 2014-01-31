@@ -89,8 +89,7 @@ LIMIT %d OFFSET %d;',
 	$config_list = db_fetch_assoc($config_list_sql);
 	
 	print '<form name="chk" method="post" action="'.$script_url.'">';
-	html_start_box('', '100%', $colors['header'], '3', 'center', '');
-	
+	html_start_box('<strong>Export Rules</strong>', '100%', $colors['header'], '3', 'center', $script_url.'?action=edit');
 	
 	/* generate page list */
 	$url_page_select = get_page_list($page, MAX_DISPLAY_PAGES, $per_page, $total_rows, $script_url.'?');
