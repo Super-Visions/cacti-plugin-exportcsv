@@ -52,7 +52,7 @@ function plugin_exportcsv_uninstall () {
 function exportcsv_version () {
 	return array(
 		'name'		=> 'exportcsv',
-		'version'	=> '0.3',
+		'version'	=> '1.0',
 		'longname'	=> 'Export Performance Data to CSV',
 		'author'	=> 'Christophe Fonteyne',
 		'homepage'	=> 'http://www.super-visions.com',
