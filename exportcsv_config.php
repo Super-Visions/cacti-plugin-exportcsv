@@ -155,7 +155,11 @@ LIMIT %d OFFSET %d;',
 	html_end_box(false);
 
 	/* draw the dropdown containing a list of available actions for this form */
-	draw_actions_dropdown($export_config_actions);
+	draw_actions_dropdown(array(
+		EXPORTCSV_ACTION_ENABLE => 'Enable',
+		EXPORTCSV_ACTION_DISABLE => 'Disable',
+		EXPORTCSV_ACTION_DELETE => 'Delete',
+	));
 
 	print "</form>\n";
 	
@@ -226,6 +230,31 @@ function export_rule_form_save(){
 	}
 	
 	header('Location: ' . $script_url . '?action=edit&id=' . $rule_id);
+}
+
+function export_rules_form_actions(){
+	global $script_url;
+	
+	$action = get_request_var_post('drp_action', 0);	
+	$rules = array();
+	foreach(array_keys($_POST) as $var) if(preg_match('/^chk_([0-9]+)$/', $var, $matches)){
+		$rules[] = (int) $matches[1];
+	}
+	$rule_ids = implode(',', $rules);
+
+	switch($action){
+		case EXPORTCSV_ACTION_DELETE:
+			$result = db_execute(sprintf('DELETE FROM plugin_exportcsv_config WHERE id IN(%s);', $rule_ids));
+			break;
+		case EXPORTCSV_ACTION_ENABLE:
+			$result = db_execute(sprintf("UPDATE plugin_exportcsv_config SET enabled = 'on' WHERE id IN(%s);", $rule_ids));
+			break;
+		case EXPORTCSV_ACTION_DISABLE:
+			$result = db_execute(sprintf("UPDATE plugin_exportcsv_config SET enabled = '' WHERE id IN(%s);", $rule_ids));
+			break;
+	}
+	
+	header('Location: ' . $script_url);
 }
 
 ?>
