@@ -20,6 +20,7 @@ define('EXPORTCSV_SCP_COMMAND', '/usr/local/bin/scp %s %s@%s:%s');
 function plugin_exportcsv_install() {
 	api_plugin_register_hook('exportcsv', 'poller_output', 'exportcsv_poller_output', 'export.php');
 	api_plugin_register_hook('exportcsv', 'poller_bottom', 'exportcsv_poller_bottom', 'export.php');
+	api_plugin_register_hook('exportcsv', 'config_form', 'exportcsv_config_form', 'setup.php');
 	api_plugin_register_hook('exportcsv', 'config_arrays', 'exportcsv_config_arrays', 'setup.php');
 	api_plugin_register_hook('exportcsv', 'draw_navigation_text', 'exportcsv_draw_navigation_text', 'setup.php');
 	
@@ -62,6 +63,86 @@ function plugin_exportcsv_version() {
 
 function plugin_exportcsv_check_config() {
 	return true;
+}
+
+/**
+ * exportcsv_config_form	- Setup forms needed for this plugin
+ */
+function exportcsv_config_form () {
+	
+	global $fields_exportcsv_rules_create, $fields_exportcsv_rules_edit;
+	
+	$fields_exportcsv_rules_create = array(
+		"name" => array(
+			"method" => "textbox",
+			"friendly_name" => "Name",
+			"description" => "A useful name for this Rule.",
+			"value" => "|arg1:name|",
+			"max_length" => "255",
+			"size" => "60"
+		),
+		"method" => array(
+			"method" => "drop_array",
+			"friendly_name" => "Method",
+			"description" => "The method used to copy files.",
+			"array" => array('cp' => 'File copy', 'php-scp' => 'scp (php)', 'cmd-scp' => 'scp (commandline)', 'php-sftp' => 'sftp (php)'),
+			"value" => "|arg1:method|",
+			"default" => "cp",
+		),
+	);
+
+	$fields_exportcsv_rules_edit = array(
+		"enabled" => array(
+			"method" => "checkbox",
+			"friendly_name" => "Enable Rule",
+			"description" => "Check this box to enable this rule.",
+			"value" => "|arg1:enabled|",
+			"default" => "",
+			"form_id" => false
+		),
+		"host" => array(
+			"method" => "textbox",
+			"friendly_name" => "Hostname",
+			"description" => "The host to connect to.",
+			"value" => "|arg1:host|",
+			"max_length" => "255",
+			"size" => "60"
+		),
+		"port" => array(
+			"method" => "textbox",
+			"friendly_name" => "TCP Port",
+			"description" => "The port to connect to.",
+			"value" => "|arg1:port|",
+			"default" => "22",
+			"max_length" => "5",
+			"size" => "20"
+		),
+		"user" => array(
+			"method" => "textbox",
+			"friendly_name" => "Username",
+			"description" => "The user used to authenticate on the host.",
+			"value" => "|arg1:user|",
+			"max_length" => "255",
+			"size" => "60"
+		),
+		"path" => array(
+			"method" => "textbox",
+			"friendly_name" => "Path",
+			"description" => "The directory where the export should be placed",
+			"value" => "|arg1:path|",
+			"defualt" => "/tmp",
+			"max_length" => "255",
+			"size" => "60"
+		),
+		"prefix" => array(
+			"method" => "textbox",
+			"friendly_name" => "Prefix",
+			"description" => "The prefix used for the exported file.",
+			"value" => "|arg1:prefix|",
+			"max_length" => "255",
+			"size" => "60"
+		),
+	);
 }
 
 function exportcsv_config_arrays() {

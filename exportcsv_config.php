@@ -40,7 +40,7 @@ switch (get_request_var_request('action')) {
 	case 'edit':
 		include_once($config['include_path'] . '/top_header.php');
 
-		export_rules_edit();
+		export_rule_edit();
 
 		include_once($config['include_path'] . '/bottom_footer.php');
 		break;
@@ -138,7 +138,7 @@ LIMIT %d OFFSET %d;',
 			
 			// export name
 			$export_config_name = title_trim($export_config['name'], read_config_option('max_title_graph'));
-			$export_config_title = '<a class="linkEditMain" href="' . htmlspecialchars($script_url.'?action=edit&id=' . $export_config['id'] . '&page=1') . '" title="' . $export_config['name'] . '">' . $export_config_name . '</a>';
+			$export_config_title = '<a class="linkEditMain" href="' . htmlspecialchars($script_url.'?action=edit&id=' . $export_config['id'] ) . '" title="' . $export_config['name'] . '">' . $export_config_name . '</a>';
 			form_selectable_cell($export_config_title, $export_config['id']);
 			
 			form_selectable_cell($export_config['id'], $export_config['id']);
@@ -160,6 +160,38 @@ LIMIT %d OFFSET %d;',
 
 	print "</form>\n";
 	
+}
+
+function export_rule_edit() {
+	global $script_url, $colors, $fields_exportcsv_rules_create, $fields_exportcsv_rules_edit;
+	
+	$rule_id = (int) get_request_var_request('id', 0);
+	
+	if (!empty($rule_id)) {
+		/* display whole rule */
+		$form_array = $fields_exportcsv_rules_create + $fields_exportcsv_rules_edit;
+	} else {
+		/* display first part of rule only and request user to proceed */
+		$form_array = $fields_exportcsv_rules_create;
+	}
+	
+	$rule_sql = sprintf('SELECT * FROM plugin_exportcsv_config WHERE id = %d;', $rule_id);
+	$rule = db_fetch_row($rule_sql);
+	
+	print '<form method="post" action="' . $script_url . '" name="exportcsv_rule_edit">';
+	html_start_box('<strong>Export Rule</strong> ' . $rule['name'], '100%', $colors['header'], 3, 'center', '');
+	
+	draw_edit_form(array(
+		'config' => array('no_form_tag' => true),
+		'fields' => inject_form_variables($form_array, $rule),
+	));
+
+	html_end_box();
+	form_hidden_box('id', $rule_id, '');
+//	form_hidden_box('item_id', (isset($rule['item_id']) ? $rule['item_id'] : '0'), '');
+	form_hidden_box('save_component_exportcsv_rule', 1, '');
+	
+	form_save_button($script_url);
 }
 
 ?>
