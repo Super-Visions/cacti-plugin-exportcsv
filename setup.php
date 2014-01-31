@@ -30,9 +30,9 @@ function plugin_exportcsv_install() {
 	$data['columns'][] = array('name' => 'id', 		'type' => 'mediumint(8)', 'unsigned' => 'unsigned', 'NULL' => false, 'auto_increment' => true);
 	$data['columns'][] = array('name' => 'name',	'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'method', 	'type' => 'char(8)', 'NULL' => false, 'default' => 'cp');
-	$data['columns'][] = array('name' => 'host',	'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'host',	'type' => 'varchar(255)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'port',	'type' => 'mediumint(8)', 'unsigned' => 'unsigned', 'NULL' => true);
-	$data['columns'][] = array('name' => 'user',	'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'user',	'type' => 'varchar(255)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'path',	'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'prefix',	'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'enabled', 'type' => 'char(2)', 'NULL' => true,  'default' => '');

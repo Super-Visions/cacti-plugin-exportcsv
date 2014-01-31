@@ -25,7 +25,7 @@ $script_url = $config['url_path'].'plugins/exportcsv/exportcsv_config.php';
 
 switch (get_request_var_request('action')) {
 	case 'save':
-		export_rules_form_save();
+		export_rule_form_save();
 
 		break;
 	case 'actions':
@@ -177,6 +177,7 @@ function export_rule_edit() {
 	
 	$rule_sql = sprintf('SELECT * FROM plugin_exportcsv_config WHERE id = %d;', $rule_id);
 	$rule = db_fetch_row($rule_sql);
+	if($rule['method'] == 'cp') $form_array['path']['method'] = 'dirpath';
 	
 	print '<form method="post" action="' . $script_url . '" name="exportcsv_rule_edit">';
 	html_start_box('<strong>Export Rule</strong> ' . $rule['name'], '100%', $colors['header'], 3, 'center', '');
@@ -192,6 +193,40 @@ function export_rule_edit() {
 	form_hidden_box('save_component_exportcsv_rule', 1, '');
 	
 	form_save_button($script_url);
+}
+
+function export_rule_form_save(){
+	global $script_url, $fields_exportcsv_rules_create, $fields_exportcsv_rules_edit;
+	
+	$form_array = $fields_exportcsv_rules_create + $fields_exportcsv_rules_edit;
+	
+	$rule_id = (int) get_request_var_post('id', 0);
+	
+	$save['id'] = $rule_id;
+	$save['name'] = form_input_validate(get_request_var_post('name'), 'name', '', false);
+	$save['method'] = form_input_validate(get_request_var_post('method'), 'method', '^(cp|php-(scp|sftp)|cmd-scp)$', false);
+	
+	if($save['method'] !== 'cp'){
+		$save['host'] = form_input_validate(get_request_var_post('host'), 'host', '', false);
+		$save['port'] = form_input_validate(get_request_var_post('port'), 'port', '[0-9]{1,5}', true);
+		$save['user'] = form_input_validate(get_request_var_post('user'), 'user', '', false);
+	}
+	
+	$save['path'] = form_input_validate(get_request_var_post('path'), 'path', '', true);
+	$save['prefix'] = form_input_validate(get_request_var_post('prefix'), 'prefix', '', true);
+	$save['enabled'] = get_request_var_post('enabled') ? 'on' : '';
+	
+	if (!is_error_message()) {
+		$rule_id = sql_save($save, 'plugin_exportcsv_config');
+
+		if ($rule_id) {
+			raise_message(1);
+		}else{
+			raise_message(2);
+		}
+	}
+	
+	header('Location: ' . $script_url . '?action=edit&id=' . $rule_id);
 }
 
 ?>
