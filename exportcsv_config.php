@@ -199,9 +199,7 @@ function export_rule_edit() {
 }
 
 function export_rule_form_save(){
-	global $script_url, $fields_exportcsv_rules_create, $fields_exportcsv_rules_edit;
-	
-	$form_array = $fields_exportcsv_rules_create + $fields_exportcsv_rules_edit;
+	global $script_url;
 	
 	$rule_id = (int) get_request_var_post('id', 0);
 	
@@ -209,7 +207,7 @@ function export_rule_form_save(){
 	$save['name'] = form_input_validate(get_request_var_post('name'), 'name', '', false);
 	$save['method'] = form_input_validate(get_request_var_post('method'), 'method', '^(cp|php-(scp|sftp)|cmd-scp)$', false);
 	
-	if($save['method'] !== 'cp'){
+	if($save['method'] !== 'cp' && !empty($rule_id)){
 		$save['host'] = form_input_validate(get_request_var_post('host'), 'host', '', false);
 		$save['port'] = form_input_validate(get_request_var_post('port'), 'port', '[0-9]{1,5}', true);
 		$save['user'] = form_input_validate(get_request_var_post('user'), 'user', '', false);
